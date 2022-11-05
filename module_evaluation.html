@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Reference API related to evaluation function and metrics">
+
+<title>Vespa Data Science - evaluation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Vespa Data Science - evaluation">
+<meta property="og:description" content="Reference API related to evaluation function and metrics">
+<meta property="og:site-name" content="Vespa Data Science">
+<meta name="twitter:title" content="Vespa Data Science - evaluation">
+<meta name="twitter:description" content="Reference API related to evaluation function and metrics">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Vespa Data Science</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">evaluation</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Vespa for Data Scientists</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Use-case experiments</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">Passage Ranking</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./passage_dataset.html" class="sidebar-item-text sidebar-link">Dataset</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./passage_uncertainty_evaluation.html" class="sidebar-item-text sidebar-link">IR evaluation metrics with uncertainty estimates</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">Model serving</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stateless_sequence_classification_task.html" class="sidebar-item-text sidebar-link">Sequence Classification task</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Use-case modules</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_passage.html" class="sidebar-item-text sidebar-link">passage</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">Core modules</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_stats.html" class="sidebar-item-text sidebar-link">stats</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_evaluation.html" class="sidebar-item-text sidebar-link active">evaluation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_query.html" class="sidebar-item-text sidebar-link">query</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_ranking.html" class="sidebar-item-text sidebar-link">ranking</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_ml.html" class="sidebar-item-text sidebar-link">ml</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#metrics" id="toc-metrics" class="nav-link active" data-scroll-target="#metrics">Metrics</a>
+  <ul class="collapse">
+  <li><a href="#evalmetric" id="toc-evalmetric" class="nav-link" data-scroll-target="#evalmetric">EvalMetric</a></li>
+  <li><a href="#evalmetric.evaluate_query" id="toc-evalmetric.evaluate_query" class="nav-link" data-scroll-target="#evalmetric.evaluate_query">EvalMetric.evaluate_query</a></li>
+  <li><a href="#matchratio" id="toc-matchratio" class="nav-link" data-scroll-target="#matchratio">MatchRatio</a></li>
+  <li><a href="#matchratio.evaluate_query" id="toc-matchratio.evaluate_query" class="nav-link" data-scroll-target="#matchratio.evaluate_query">MatchRatio.evaluate_query</a></li>
+  <li><a href="#timequery" id="toc-timequery" class="nav-link" data-scroll-target="#timequery">TimeQuery</a></li>
+  <li><a href="#timequery.evaluate_query" id="toc-timequery.evaluate_query" class="nav-link" data-scroll-target="#timequery.evaluate_query">TimeQuery.evaluate_query</a></li>
+  <li><a href="#recall" id="toc-recall" class="nav-link" data-scroll-target="#recall">Recall</a></li>
+  <li><a href="#recall.evaluate_query" id="toc-recall.evaluate_query" class="nav-link" data-scroll-target="#recall.evaluate_query">Recall.evaluate_query</a></li>
+  <li><a href="#reciprocalrank" id="toc-reciprocalrank" class="nav-link" data-scroll-target="#reciprocalrank">ReciprocalRank</a></li>
+  <li><a href="#reciprocalrank.evaluate_query" id="toc-reciprocalrank.evaluate_query" class="nav-link" data-scroll-target="#reciprocalrank.evaluate_query">ReciprocalRank.evaluate_query</a></li>
+  <li><a href="#normalizeddiscountedcumulativegain" id="toc-normalizeddiscountedcumulativegain" class="nav-link" data-scroll-target="#normalizeddiscountedcumulativegain">NormalizedDiscountedCumulativeGain</a></li>
+  <li><a href="#normalizeddiscountedcumulativegain.evaluate_query" id="toc-normalizeddiscountedcumulativegain.evaluate_query" class="nav-link" data-scroll-target="#normalizeddiscountedcumulativegain.evaluate_query">NormalizedDiscountedCumulativeGain.evaluate_query</a></li>
+  </ul></li>
+  <li><a href="#evaluation-queries-in-batch" id="toc-evaluation-queries-in-batch" class="nav-link" data-scroll-target="#evaluation-queries-in-batch">Evaluation queries in batch</a>
+  <ul class="collapse">
+  <li><a href="#evaluate" id="toc-evaluate" class="nav-link" data-scroll-target="#evaluate">evaluate</a></li>
+  </ul></li>
+  <li><a href="#evaluate-specific-query" id="toc-evaluate-specific-query" class="nav-link" data-scroll-target="#evaluate-specific-query">Evaluate specific query</a>
+  <ul class="collapse">
+  <li><a href="#evaluate_query" id="toc-evaluate_query" class="nav-link" data-scroll-target="#evaluate_query">evaluate_query</a></li>
+  </ul></li>
+  <li><a href="#evaluate-query-under-specific-document-ids" id="toc-evaluate-query-under-specific-document-ids" class="nav-link" data-scroll-target="#evaluate-query-under-specific-document-ids">Evaluate query under specific document ids</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/vespa-engine/learntorank/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">evaluation</h1>
+</div>
+
+<div>
+  <div class="description">
+    Reference API related to evaluation function and metrics
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="metrics" class="level2">
+<h2 class="anchored" data-anchor-id="metrics">Metrics</h2>
+<p>Abstract and concrete classes related to evaluation metrics.</p>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L17" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="evalmetric" class="level3">
+<h3 class="anchored" data-anchor-id="evalmetric">EvalMetric</h3>
+<blockquote class="blockquote">
+<pre><code> EvalMetric ()</code></pre>
+</blockquote>
+<p>Abstract class for evaluation metric.</p>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L24" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="evalmetric.evaluate_query" class="level3">
+<h3 class="anchored" data-anchor-id="evalmetric.evaluate_query">EvalMetric.evaluate_query</h3>
+<blockquote class="blockquote">
+<pre><code> EvalMetric.evaluate_query (query_results, relevant_docs, id_field,
+                            default_score, detailed_metrics=False)</code></pre>
+</blockquote>
+<p>Abstract method to be implemented by metrics inheriting from <a href="https://thigm85.github.io/learntorank/module_evaluation.html#evalmetric"><code>EvalMetric</code></a> to evaluate query results.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>query_results</td>
+<td></td>
+<td></td>
+<td>Raw query results returned by Vespa.</td>
+</tr>
+<tr class="even">
+<td>relevant_docs</td>
+<td></td>
+<td></td>
+<td>Each dict contains a doc id a optionally a doc score.</td>
+</tr>
+<tr class="odd">
+<td>id_field</td>
+<td></td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td></td>
+<td></td>
+<td>Score to assign to the additional documents that are not relevant. Default to 0.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Metric values.</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L36" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="matchratio" class="level3">
+<h3 class="anchored" data-anchor-id="matchratio">MatchRatio</h3>
+<blockquote class="blockquote">
+<pre><code> MatchRatio ()</code></pre>
+</blockquote>
+<p>Computes the ratio of documents retrieved by the match phase.</p>
+<p>Instantiate the metric:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>metric <span class="op">=</span> MatchRatio()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="matchratio.evaluate_query" class="level3">
+<h3 class="anchored" data-anchor-id="matchratio.evaluate_query">MatchRatio.evaluate_query</h3>
+<blockquote class="blockquote">
+<pre><code> MatchRatio.evaluate_query (query_results:vespa.io.VespaQueryResponse,
+                            relevant_docs:List[Dict], id_field:str,
+                            default_score:int, detailed_metrics=False)</code></pre>
+</blockquote>
+<p>Evaluate query results according to match ratio metric.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>query_results</td>
+<td>VespaQueryResponse</td>
+<td></td>
+<td>Raw query results returned by Vespa.</td>
+</tr>
+<tr class="even">
+<td>relevant_docs</td>
+<td>typing.List[typing.Dict]</td>
+<td></td>
+<td>Each dict contains a doc id a optionally a doc score.</td>
+</tr>
+<tr class="odd">
+<td>id_field</td>
+<td>str</td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td>int</td>
+<td></td>
+<td>Score to assign to the additional documents that are not relevant. Default to 0.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Returns the match ratio. In addition, if <code>detailed_metrics=False</code>, returns the number of retrieved docs <code>_retrieved_docs</code> and the number of docs available in the corpus <code>_docs_available</code>.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Compute match ratio:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> metric.evaluate_query(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'match_ratio': 0.01731996353691887}</code></pre>
+</div>
+</div>
+<p>Return detailed metrics, in addition to match ratio:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> metric.evaluate_query(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    detailed_metrics<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'match_ratio': 0.01731996353691887,
+ 'match_ratio_retrieved_docs': 1083,
+ 'match_ratio_docs_available': 62529}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L72" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="timequery" class="level3">
+<h3 class="anchored" data-anchor-id="timequery">TimeQuery</h3>
+<blockquote class="blockquote">
+<pre><code> TimeQuery ()</code></pre>
+</blockquote>
+<p>Compute the time it takes for Vespa to execute the query..</p>
+<p>Instantiate the metric:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>time_metric <span class="op">=</span> TimeQuery()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L80" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="timequery.evaluate_query" class="level3">
+<h3 class="anchored" data-anchor-id="timequery.evaluate_query">TimeQuery.evaluate_query</h3>
+<blockquote class="blockquote">
+<pre><code> TimeQuery.evaluate_query (query_results:vespa.io.VespaQueryResponse,
+                           relevant_docs:List[Dict], id_field:str,
+                           default_score:int, detailed_metrics=False)</code></pre>
+</blockquote>
+<p>Evaluate query results according to query time metric.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>query_results</td>
+<td>VespaQueryResponse</td>
+<td></td>
+<td>Raw query results returned by Vespa.</td>
+</tr>
+<tr class="even">
+<td>relevant_docs</td>
+<td>typing.List[typing.Dict]</td>
+<td></td>
+<td>Each dict contains a doc id a optionally a doc score.</td>
+</tr>
+<tr class="odd">
+<td>id_field</td>
+<td>str</td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td>int</td>
+<td></td>
+<td>Score to assign to the additional documents that are not relevant. Default to 0.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Returns the match ratio. In addition, if <code>detailed_metrics=False</code>, returns the number of retrieved docs <code>_retrieved_docs</code> and the number of docs available in the corpus <code>_docs_available</code>.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Compute the query time a client would observe (except network latency).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>time_metric.evaluate_query(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span><span class="va">None</span>, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'search_time': 0.013}</code></pre>
+</div>
+</div>
+<p>Include detailed metrics. In addition to the <code>search_time</code> above, it returns the time to execute the first protocol phase/matching phase (<code>search_time_query_time</code>) and the time to execute the summary fill protocol phase for the globally ordered top-k hits (<code>search_time_summary_fetch_time</code>).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>time_metric.evaluate_query(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span><span class="va">None</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    detailed_metrics<span class="op">=</span><span class="va">True</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'search_time': 0.013,
+ 'search_time_query_time': 0.01,
+ 'search_time_summary_fetch_time': 0.002}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L110" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="recall" class="level3">
+<h3 class="anchored" data-anchor-id="recall">Recall</h3>
+<blockquote class="blockquote">
+<pre><code> Recall (at:int)</code></pre>
+</blockquote>
+<p>Compute the recall at position <code>at</code>.</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>at</td>
+<td>int</td>
+<td>Maximum position on the resulting list to look for relevant docs.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>None</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Instantiate the metric:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>recall_1 <span class="op">=</span> Recall(at<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>recall_2 <span class="op">=</span> Recall(at<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>recall_3 <span class="op">=</span> Recall(at<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L122" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="recall.evaluate_query" class="level3">
+<h3 class="anchored" data-anchor-id="recall.evaluate_query">Recall.evaluate_query</h3>
+<blockquote class="blockquote">
+<pre><code> Recall.evaluate_query (query_results:vespa.io.VespaQueryResponse,
+                        relevant_docs:List[Dict], id_field:str,
+                        default_score:int, detailed_metrics=False)</code></pre>
+</blockquote>
+<p>Evaluate query results according to recall metric.</p>
+<p>There is an assumption that only documents with score &gt; 0 are relevant. Recall is equal to zero in case no relevant documents with score &gt; 0 is provided.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>query_results</td>
+<td>VespaQueryResponse</td>
+<td></td>
+<td>Raw query results returned by Vespa.</td>
+</tr>
+<tr class="even">
+<td>relevant_docs</td>
+<td>typing.List[typing.Dict]</td>
+<td></td>
+<td>Each dict contains a doc id a optionally a doc score.</td>
+</tr>
+<tr class="odd">
+<td>id_field</td>
+<td>str</td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td>int</td>
+<td></td>
+<td>Score to assign to the additional documents that are not relevant. Default to 0.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Returns the recall value.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Compute recall:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> recall_2.evaluate_query(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span>relevant_docs,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'recall_2': 0.5}</code></pre>
+</div>
+</div>
+<p>Compute recall:</p>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L148" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="reciprocalrank" class="level3">
+<h3 class="anchored" data-anchor-id="reciprocalrank">ReciprocalRank</h3>
+<blockquote class="blockquote">
+<pre><code> ReciprocalRank (at:int)</code></pre>
+</blockquote>
+<p>Compute the reciprocal rank at position <code>at</code></p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>at</td>
+<td>int</td>
+<td>Maximum position on the resulting list to look for relevant docs.</td>
+</tr>
+</tbody>
+</table>
+<p>Instantiate the metric:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>rr_1 <span class="op">=</span> ReciprocalRank(at<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>rr_2 <span class="op">=</span> ReciprocalRank(at<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>rr_3 <span class="op">=</span> ReciprocalRank(at<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L160" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="reciprocalrank.evaluate_query" class="level3">
+<h3 class="anchored" data-anchor-id="reciprocalrank.evaluate_query">ReciprocalRank.evaluate_query</h3>
+<blockquote class="blockquote">
+<pre><code> ReciprocalRank.evaluate_query (query_results:vespa.io.VespaQueryResponse,
+                                relevant_docs:List[Dict], id_field:str,
+                                default_score:int, detailed_metrics=False)</code></pre>
+</blockquote>
+<p>Evaluate query results according to reciprocal rank metric.</p>
+<p>There is an assumption that only documents with score &gt; 0 are relevant.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>query_results</td>
+<td>VespaQueryResponse</td>
+<td></td>
+<td>Raw query results returned by Vespa.</td>
+</tr>
+<tr class="even">
+<td>relevant_docs</td>
+<td>typing.List[typing.Dict]</td>
+<td></td>
+<td>Each dict contains a doc id a optionally a doc score.</td>
+</tr>
+<tr class="odd">
+<td>id_field</td>
+<td>str</td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td>int</td>
+<td></td>
+<td>Score to assign to the additional documents that are not relevant. Default to 0.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Returns the reciprocal rank value.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Compute reciprocal rank:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> rr_2.evaluate_query(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span>relevant_docs,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'reciprocal_rank_2': 0.5}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L188" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="normalizeddiscountedcumulativegain" class="level3">
+<h3 class="anchored" data-anchor-id="normalizeddiscountedcumulativegain">NormalizedDiscountedCumulativeGain</h3>
+<blockquote class="blockquote">
+<pre><code> NormalizedDiscountedCumulativeGain (at:int)</code></pre>
+</blockquote>
+<p>Compute the normalized discounted cumulative gain at position <code>at</code>.</p>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 38%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>at</td>
+<td>int</td>
+<td>Maximum position on the resulting list to look for relevant docs.</td>
+</tr>
+</tbody>
+</table>
+<p>Instantiate the metric:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ndcg_1 <span class="op">=</span> NormalizedDiscountedCumulativeGain(at<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>ndcg_2 <span class="op">=</span> NormalizedDiscountedCumulativeGain(at<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>ndcg_3 <span class="op">=</span> NormalizedDiscountedCumulativeGain(at<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L204" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="normalizeddiscountedcumulativegain.evaluate_query" class="level3">
+<h3 class="anchored" data-anchor-id="normalizeddiscountedcumulativegain.evaluate_query">NormalizedDiscountedCumulativeGain.evaluate_query</h3>
+<blockquote class="blockquote">
+<pre><code> NormalizedDiscountedCumulativeGain.evaluate_query
+                                                    (query_results:vespa.i
+                                                    o.VespaQueryResponse, 
+                                                    relevant_docs:List[Dic
+                                                    t], id_field:str,
+                                                    default_score:int, det
+                                                    ailed_metrics=False)</code></pre>
+</blockquote>
+<p>Evaluate query results according to normalized discounted cumulative gain.</p>
+<p>There is an assumption that documents returned by the query that are not included in the set of relevant documents have score equal to zero. Similarly, if the query returns a number <code>N &lt; at</code> documents, we will assume that those <code>N - at</code> missing scores are equal to zero.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>query_results</td>
+<td>VespaQueryResponse</td>
+<td></td>
+<td>Raw query results returned by Vespa.</td>
+</tr>
+<tr class="even">
+<td>relevant_docs</td>
+<td>typing.List[typing.Dict]</td>
+<td></td>
+<td>Each dict contains a doc id a optionally a doc score.</td>
+</tr>
+<tr class="odd">
+<td>id_field</td>
+<td>str</td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td>int</td>
+<td></td>
+<td>Score to assign to the additional documents that are not relevant. Default to 0.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Returns the normalized discounted cumulative gain. In addition, if <code>detailed_metrics=False</code>, returns the ideal discounted cumulative gain <code>_ideal_dcg</code>, the discounted cumulative gain <code>_dcg</code>.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Compute NDCG:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>metric <span class="op">=</span> NormalizedDiscountedCumulativeGain(at<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> ndcg_2.evaluate_query(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span>relevant_docs,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'ndcg_2': 0.38685280723454163}</code></pre>
+</div>
+</div>
+<p>Return detailed metrics, in addition to NDCG:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> ndcg_2.evaluate_query(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    query_results<span class="op">=</span>query_results,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    relevant_docs<span class="op">=</span>relevant_docs,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"vespa_id_field"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    default_score<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    detailed_metrics<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'ndcg_2': 0.38685280723454163,
+ 'ndcg_2_ideal_dcg': 1.6309297535714575,
+ 'ndcg_2_dcg': 0.6309297535714575}</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluation-queries-in-batch" class="level2">
+<h2 class="anchored" data-anchor-id="evaluation-queries-in-batch">Evaluation queries in batch</h2>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L288" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="evaluate" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate">evaluate</h3>
+<blockquote class="blockquote">
+<pre><code> evaluate (app:vespa.application.Vespa,
+           labeled_data:Union[List[Dict],pandas.core.frame.DataFrame],
+           eval_metrics:List[__main__.EvalMetric], query_model:Union[learn
+           torank.query.QueryModel,List[learntorank.query.QueryModel]],
+           id_field:str, default_score:int=0, detailed_metrics=False,
+           per_query=False, aggregators=None, timeout=1000, **kwargs)</code></pre>
+</blockquote>
+<p>Evaluate a <a href="https://thigm85.github.io/learntorank/module_query.html#querymodel"><code>QueryModel</code></a> according to a list of <a href="https://thigm85.github.io/learntorank/module_evaluation.html#evalmetric"><code>EvalMetric</code></a>.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>app</td>
+<td>Vespa</td>
+<td></td>
+<td>Connection to a Vespa application.</td>
+</tr>
+<tr class="even">
+<td>labeled_data</td>
+<td>typing.Union[typing.List[typing.Dict], pandas.core.frame.DataFrame]</td>
+<td></td>
+<td>Data containing query, query_id and relevant docs. See examples below for format.</td>
+</tr>
+<tr class="odd">
+<td>eval_metrics</td>
+<td>typing.List[<strong>main</strong>.EvalMetric]</td>
+<td></td>
+<td>Evaluation metrics</td>
+</tr>
+<tr class="even">
+<td>query_model</td>
+<td>typing.Union[learntorank.query.QueryModel, typing.List[learntorank.query.QueryModel]]</td>
+<td></td>
+<td>Query models to be evaluated</td>
+</tr>
+<tr class="odd">
+<td>id_field</td>
+<td>str</td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td>int</td>
+<td>0</td>
+<td>Score to assign to the additional documents that are not relevant.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td>per_query</td>
+<td>bool</td>
+<td>False</td>
+<td>Set to True to return evaluation metrics per query.</td>
+</tr>
+<tr class="odd">
+<td>aggregators</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Used only if <code>per_query=False</code>. List of pandas friendly aggregators to summarize per model metrics. We use [“mean”, “median”, “std”] by default.</td>
+</tr>
+<tr class="even">
+<td>timeout</td>
+<td>int</td>
+<td>1000</td>
+<td>Vespa query timeout in ms.</td>
+</tr>
+<tr class="odd">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>DataFrame</strong></td>
+<td></td>
+<td><strong>Returns query_id and metrics according to the selected evaluation metrics.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Usage:</p>
+<p>Setup and feed a Vespa application:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.passage <span class="im">import</span> create_basic_search_package</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.passage <span class="im">import</span> PassageData</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> vespa.deployment <span class="im">import</span> VespaDocker</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>app_package <span class="op">=</span> create_basic_search_package(name<span class="op">=</span><span class="st">"EvaluationApp"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>vespa_docker <span class="op">=</span> VespaDocker(port<span class="op">=</span><span class="dv">8082</span>, cfgsrv_port<span class="op">=</span><span class="dv">19072</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> vespa_docker.deploy(application_package<span class="op">=</span>app_package)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> PassageData.load()</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>responses <span class="op">=</span> app.feed_df(</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    df<span class="op">=</span>data.get_corpus(), </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    include_id<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Define query models to be evaluated:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.query <span class="im">import</span> OR, Ranking</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>bm25_query_model <span class="op">=</span> QueryModel(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"bm25"</span>, </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    match_phase<span class="op">=</span>OR(), </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    ranking<span class="op">=</span>Ranking(name<span class="op">=</span><span class="st">"bm25"</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>native_query_model <span class="op">=</span> QueryModel(</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"native_rank"</span>, </span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    match_phase<span class="op">=</span>OR(), </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    ranking<span class="op">=</span>Ranking(name<span class="op">=</span><span class="st">"native_rank"</span>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Define metrics to compute during evaluation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>metrics <span class="op">=</span> [</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    Recall(at<span class="op">=</span><span class="dv">10</span>), </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    ReciprocalRank(at<span class="op">=</span><span class="dv">3</span>), </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    NormalizedDiscountedCumulativeGain(at<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Get labeled data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>labeled_data <span class="op">=</span> data.get_labels(<span class="bu">type</span><span class="op">=</span><span class="st">"dev"</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>labeled_data[<span class="dv">0</span>:<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>[{'query_id': '1101971',
+  'query': 'why say the sky is the limit',
+  'relevant_docs': [{'id': '7407715', 'score': 1}]},
+ {'query_id': '712898',
+  'query': 'what is an cvc in radiology',
+  'relevant_docs': [{'id': '7661336', 'score': 1}]}]</code></pre>
+</div>
+</div>
+<p>Evaluate:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> evaluate(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    labeled_data<span class="op">=</span>labeled_data, </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    eval_metrics<span class="op">=</span>metrics, </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>[native_query_model, bm25_query_model], </span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>bm25</th>
+      <th>native_rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">recall_10</th>
+      <th>mean</th>
+      <td>0.935833</td>
+      <td>0.845833</td>
+    </tr>
+    <tr>
+      <th>median</th>
+      <td>1.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.215444</td>
+      <td>0.342749</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">reciprocal_rank_3</th>
+      <th>mean</th>
+      <td>0.935000</td>
+      <td>0.746667</td>
+    </tr>
+    <tr>
+      <th>median</th>
+      <td>1.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.231977</td>
+      <td>0.399551</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">ndcg_3</th>
+      <th>mean</th>
+      <td>0.912839</td>
+      <td>0.740814</td>
+    </tr>
+    <tr>
+      <th>median</th>
+      <td>1.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.242272</td>
+      <td>0.387611</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>The evaluate function also accepts labeled data as a data frame:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>labeled_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>qid</th>
+      <th>query</th>
+      <th>doc_id</th>
+      <th>relevance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1101971</td>
+      <td>why say the sky is the limit</td>
+      <td>7407715</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>712898</td>
+      <td>what is an cvc in radiology</td>
+      <td>7661336</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>154469</td>
+      <td>dmv california how long does it take to get id</td>
+      <td>7914544</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>930015</td>
+      <td>what's an epigraph</td>
+      <td>7928705</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>860085</td>
+      <td>what is va tax</td>
+      <td>2915383</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>evaluation_df <span class="op">=</span> evaluate(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    labeled_data<span class="op">=</span>labeled_df, </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    eval_metrics<span class="op">=</span>metrics, </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>[native_query_model, bm25_query_model], </span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span>,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>evaluation_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>bm25</th>
+      <th>native_rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">recall_10</th>
+      <th>mean</th>
+      <td>0.935833</td>
+      <td>0.845833</td>
+    </tr>
+    <tr>
+      <th>median</th>
+      <td>1.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.215444</td>
+      <td>0.342749</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">reciprocal_rank_3</th>
+      <th>mean</th>
+      <td>0.935000</td>
+      <td>0.746667</td>
+    </tr>
+    <tr>
+      <th>median</th>
+      <td>1.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.231977</td>
+      <td>0.399551</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">ndcg_3</th>
+      <th>mean</th>
+      <td>0.912839</td>
+      <td>0.740814</td>
+    </tr>
+    <tr>
+      <th>median</th>
+      <td>1.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.242272</td>
+      <td>0.387611</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Control which aggregators are computed:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> evaluate(</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    labeled_data<span class="op">=</span>labeled_data, </span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    eval_metrics<span class="op">=</span>metrics, </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>[native_query_model, bm25_query_model], </span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span>,</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    aggregators<span class="op">=</span>[<span class="st">"mean"</span>, <span class="st">"std"</span>]</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>bm25</th>
+      <th>native_rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="2" valign="top">recall_10</th>
+      <th>mean</th>
+      <td>0.935833</td>
+      <td>0.845833</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.215444</td>
+      <td>0.342749</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">reciprocal_rank_3</th>
+      <th>mean</th>
+      <td>0.935000</td>
+      <td>0.746667</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.231977</td>
+      <td>0.399551</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">ndcg_3</th>
+      <th>mean</th>
+      <td>0.912839</td>
+      <td>0.740814</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.242272</td>
+      <td>0.387611</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Include detailed metrics when available, this includes intermediate steps that are available for some of the metrics:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> evaluate(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    labeled_data<span class="op">=</span>labeled_data, </span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    eval_metrics<span class="op">=</span>metrics, </span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>[native_query_model, bm25_query_model], </span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    aggregators<span class="op">=</span>[<span class="st">"mean"</span>, <span class="st">"std"</span>],</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    detailed_metrics<span class="op">=</span><span class="va">True</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>bm25</th>
+      <th>native_rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="2" valign="top">recall_10</th>
+      <th>mean</th>
+      <td>0.935833</td>
+      <td>0.845833</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.215444</td>
+      <td>0.342749</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">reciprocal_rank_3</th>
+      <th>mean</th>
+      <td>0.935000</td>
+      <td>0.746667</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.231977</td>
+      <td>0.399551</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">ndcg_3</th>
+      <th>mean</th>
+      <td>0.912839</td>
+      <td>0.740814</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.242272</td>
+      <td>0.387611</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">ndcg_3_ideal_dcg</th>
+      <th>mean</th>
+      <td>1.054165</td>
+      <td>1.054165</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.207315</td>
+      <td>0.207315</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">ndcg_3_dcg</th>
+      <th>mean</th>
+      <td>0.938928</td>
+      <td>0.765474</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.225533</td>
+      <td>0.387161</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Generate results per query:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> evaluate(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    labeled_data<span class="op">=</span>labeled_data, </span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    eval_metrics<span class="op">=</span>metrics, </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>[native_query_model, bm25_query_model], </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span>,</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    per_query<span class="op">=</span><span class="va">True</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>evaluation.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>query_id</th>
+      <th>recall_10</th>
+      <th>reciprocal_rank_3</th>
+      <th>ndcg_3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>native_rank</td>
+      <td>1101971</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>native_rank</td>
+      <td>712898</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>native_rank</td>
+      <td>154469</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>native_rank</td>
+      <td>930015</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>native_rank</td>
+      <td>860085</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluate-specific-query" class="level2">
+<h2 class="anchored" data-anchor-id="evaluate-specific-query">Evaluate specific query</h2>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/evaluation.py#L352" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="evaluate_query" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate_query">evaluate_query</h3>
+<blockquote class="blockquote">
+<pre><code> evaluate_query (app:vespa.application.Vespa,
+                 eval_metrics:List[__main__.EvalMetric],
+                 query_model:learntorank.query.QueryModel, query_id:str,
+                 query:str, id_field:str, relevant_docs:List[Dict],
+                 default_score:int=0, detailed_metrics=False, **kwargs)</code></pre>
+</blockquote>
+<p>Evaluate a single query according to evaluation metrics</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>app</td>
+<td>Vespa</td>
+<td></td>
+<td>Connection to a Vespa application.</td>
+</tr>
+<tr class="even">
+<td>eval_metrics</td>
+<td>typing.List[<strong>main</strong>.EvalMetric]</td>
+<td></td>
+<td>Evaluation metrics</td>
+</tr>
+<tr class="odd">
+<td>query_model</td>
+<td>QueryModel</td>
+<td></td>
+<td>Query model to be evaluated</td>
+</tr>
+<tr class="even">
+<td>query_id</td>
+<td>str</td>
+<td></td>
+<td>Query id represented as str.</td>
+</tr>
+<tr class="odd">
+<td>query</td>
+<td>str</td>
+<td></td>
+<td>Query string.</td>
+</tr>
+<tr class="even">
+<td>id_field</td>
+<td>str</td>
+<td></td>
+<td>The Vespa field representing the document id.</td>
+</tr>
+<tr class="odd">
+<td>relevant_docs</td>
+<td>typing.List[typing.Dict]</td>
+<td></td>
+<td>Each dict contains a doc id a optionally a doc score.</td>
+</tr>
+<tr class="even">
+<td>default_score</td>
+<td>int</td>
+<td>0</td>
+<td>Score to assign to the additional documents that are not relevant.</td>
+</tr>
+<tr class="odd">
+<td>detailed_metrics</td>
+<td>bool</td>
+<td>False</td>
+<td>Return intermediate computations if available.</td>
+</tr>
+<tr class="even">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>typing.Dict</strong></td>
+<td></td>
+<td><strong>Contains query_id and metrics according to the selected evaluation metrics.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Usage:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> Vespa(url <span class="op">=</span> <span class="st">"https://api.cord19.vespa.ai"</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>query_model <span class="op">=</span> QueryModel(</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    match_phase <span class="op">=</span> OR(),</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    ranking <span class="op">=</span> Ranking(name<span class="op">=</span><span class="st">"bm25"</span>, list_features<span class="op">=</span><span class="va">True</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Evaluate a single query:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>query_evaluation <span class="op">=</span> evaluate_query(</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    eval_metrics <span class="op">=</span> eval_metrics, </span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    query_model <span class="op">=</span> bm25_query_model, </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    query_id <span class="op">=</span> <span class="st">"0"</span>, </span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    query <span class="op">=</span> <span class="st">"Intrauterine virus infections and congenital heart disease"</span>, </span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    id_field <span class="op">=</span> <span class="st">"id"</span>,</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    relevant_docs <span class="op">=</span> [{<span class="st">"id"</span>: <span class="dv">0</span>, <span class="st">"score"</span>: <span class="dv">1</span>}, {<span class="st">"id"</span>: <span class="dv">3</span>, <span class="st">"score"</span>: <span class="dv">1</span>}],</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    default_score <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>query_evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'model': 'bm25',
+ 'query_id': '0',
+ 'match_ratio': 0.814424921006077,
+ 'recall_10': 0.0,
+ 'reciprocal_rank_10': 0}</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluate-query-under-specific-document-ids" class="level2">
+<h2 class="anchored" data-anchor-id="evaluate-query-under-specific-document-ids">Evaluate query under specific document ids</h2>
+<p>Use <code>recall</code> to specify which documents should be included in the evaluation.</p>
+<p>In the example below, we include documents with id equal to 0, 1 and 2. Since the relevant documents for this query are the documents with id 0 and 3, we should get recall equal to 0.5.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>query_evaluation <span class="op">=</span> evaluate_query(</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    eval_metrics <span class="op">=</span> eval_metrics, </span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    query_model <span class="op">=</span> query_model, </span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>    query_id <span class="op">=</span> <span class="dv">0</span>, </span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    query <span class="op">=</span> <span class="st">"Intrauterine virus infections and congenital heart disease"</span>, </span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>    id_field <span class="op">=</span> <span class="st">"id"</span>,</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>    relevant_docs <span class="op">=</span> [{<span class="st">"id"</span>: <span class="dv">0</span>, <span class="st">"score"</span>: <span class="dv">1</span>}, {<span class="st">"id"</span>: <span class="dv">3</span>, <span class="st">"score"</span>: <span class="dv">1</span>}],</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>    default_score <span class="op">=</span> <span class="dv">0</span>,</span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>    recall <span class="op">=</span> (<span class="st">"id"</span>, [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>query_evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'model': 'default_name',
+ 'query_id': 0,
+ 'match_ratio': 9.70242657688688e-06,
+ 'recall_10': 0.5,
+ 'reciprocal_rank_10': 1.0}</code></pre>
+</div>
+</div>
+<p>We now include documents with id equal to 0, 1, 2 and 3. This should give a recall equal to 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>query_evaluation <span class="op">=</span> evaluate_query(</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    eval_metrics <span class="op">=</span> eval_metrics, </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    query_model <span class="op">=</span> query_model, </span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    query_id <span class="op">=</span> <span class="dv">0</span>, </span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    query <span class="op">=</span> <span class="st">"Intrauterine virus infections and congenital heart disease"</span>, </span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    id_field <span class="op">=</span> <span class="st">"id"</span>,</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>    relevant_docs <span class="op">=</span> [{<span class="st">"id"</span>: <span class="dv">0</span>, <span class="st">"score"</span>: <span class="dv">1</span>}, {<span class="st">"id"</span>: <span class="dv">3</span>, <span class="st">"score"</span>: <span class="dv">1</span>}],</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>    default_score <span class="op">=</span> <span class="dv">0</span>,</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>    recall <span class="op">=</span> (<span class="st">"id"</span>, [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>query_evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'model': 'default_name',
+ 'query_id': 0,
+ 'match_ratio': 1.2936568769182506e-05,
+ 'recall_10': 1.0,
+ 'reciprocal_rank_10': 1.0}</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

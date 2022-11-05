@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Compare different metrics and their uncertainty in the passage ranking dataset.">
+
+<title>Vespa Data Science - IR evaluation metrics with uncertainty estimates</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Vespa Data Science - IR evaluation metrics with uncertainty estimates">
+<meta property="og:description" content="Compare different metrics and their uncertainty in the passage ranking dataset.">
+<meta property="og:site-name" content="Vespa Data Science">
+<meta name="twitter:title" content="Vespa Data Science - IR evaluation metrics with uncertainty estimates">
+<meta name="twitter:description" content="Compare different metrics and their uncertainty in the passage ranking dataset.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Vespa Data Science</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">IR evaluation metrics with uncertainty estimates</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Vespa for Data Scientists</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Use-case experiments</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Passage Ranking</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./passage_dataset.html" class="sidebar-item-text sidebar-link">Dataset</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./passage_uncertainty_evaluation.html" class="sidebar-item-text sidebar-link active">IR evaluation metrics with uncertainty estimates</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">Model serving</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stateless_sequence_classification_task.html" class="sidebar-item-text sidebar-link">Sequence Classification task</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Use-case modules</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_passage.html" class="sidebar-item-text sidebar-link">passage</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">Core modules</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_stats.html" class="sidebar-item-text sidebar-link">stats</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_evaluation.html" class="sidebar-item-text sidebar-link">evaluation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_query.html" class="sidebar-item-text sidebar-link">query</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_ranking.html" class="sidebar-item-text sidebar-link">ranking</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_ml.html" class="sidebar-item-text sidebar-link">ml</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#create-the-vespa-application-package" id="toc-create-the-vespa-application-package" class="nav-link active" data-scroll-target="#create-the-vespa-application-package">Create the Vespa application package</a></li>
+  <li><a href="#deploy-the-application" id="toc-deploy-the-application" class="nav-link" data-scroll-target="#deploy-the-application">Deploy the application</a></li>
+  <li><a href="#get-sample-data" id="toc-get-sample-data" class="nav-link" data-scroll-target="#get-sample-data">Get sample data</a></li>
+  <li><a href="#feed-the-application" id="toc-feed-the-application" class="nav-link" data-scroll-target="#feed-the-application">Feed the application</a></li>
+  <li><a href="#query-the-application" id="toc-query-the-application" class="nav-link" data-scroll-target="#query-the-application">Query the application</a>
+  <ul class="collapse">
+  <li><a href="#query-with-querymodel" id="toc-query-with-querymodel" class="nav-link" data-scroll-target="#query-with-querymodel">Query with QueryModel</a></li>
+  <li><a href="#query-with-vespa-query-language" id="toc-query-with-vespa-query-language" class="nav-link" data-scroll-target="#query-with-vespa-query-language">Query with Vespa Query Language</a></li>
+  </ul></li>
+  <li><a href="#evaluate-query-models" id="toc-evaluate-query-models" class="nav-link" data-scroll-target="#evaluate-query-models">Evaluate query models</a>
+  <ul class="collapse">
+  <li><a href="#point-estimates" id="toc-point-estimates" class="nav-link" data-scroll-target="#point-estimates">Point estimates</a></li>
+  <li><a href="#uncertainty-estimates" id="toc-uncertainty-estimates" class="nav-link" data-scroll-target="#uncertainty-estimates">Uncertainty estimates</a></li>
+  </ul></li>
+  <li><a href="#cleanup-the-environment" id="toc-cleanup-the-environment" class="nav-link" data-scroll-target="#cleanup-the-environment">Cleanup the environment</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/vespa-engine/learntorank/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">IR evaluation metrics with uncertainty estimates</h1>
+</div>
+
+<div>
+  <div class="description">
+    Compare different metrics and their uncertainty in the passage ranking dataset.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>When working with search engine apps, be it a text search or a recommendation system, part of the job is doing experiments around components such as ranking functions and deciding which experiments deliver the best result.</p>
+<p>This tutorial builds a text search app with <a href="https://vespa.ai/">Vespa</a>, feeds a sample of the passage ranking dataset to the app, and evaluates two ranking functions across three different metrics. <strong>In addition to return point estimates of the evaluation metrics, we compute confidence intervals as illustrated in the plot below</strong>. Measuring uncertainty around the metric estimates gives us a better sense of how significant is the impact of our changes in the application.</p>
+<p><img src="resources/passage/passage_uncertainty.png" class="img-fluid"></p>
+<p>The code and the data used in this end-to-end tutorial are available and can be reproduced in a Jupyter Notebook.</p>
+<section id="create-the-vespa-application-package" class="level2">
+<h2 class="anchored" data-anchor-id="create-the-vespa-application-package">Create the Vespa application package</h2>
+<p>Create a Vespa application package to perform passage ranking experiments using the <a href="https://thigm85.github.io/learntorank/module_passage.html#create_basic_search_package"><code>create_basic_search_package</code></a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.passage <span class="im">import</span> create_basic_search_package</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>app_package <span class="op">=</span> create_basic_search_package()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can inspect how the <a href="https://docs.vespa.ai/en/schemas.html">Vespa search definition</a> file looks like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(app_package.schema.schema_to_text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>schema PassageRanking {
+    document PassageRanking {
+        field doc_id type string {
+            indexing: attribute | summary
+        }
+        field text type string {
+            indexing: index | summary
+            index: enable-bm25
+        }
+    }
+    fieldset default {
+        fields: text
+    }
+    rank-profile bm25 {
+        first-phase {
+            expression: bm25(text)
+        }
+        summary-features {
+            bm25(text)
+        }
+    }
+    rank-profile native_rank {
+        first-phase {
+            expression: nativeRank(text)
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<p>In this tutorial, we are going to compare two ranking functions. One is based on <a href="https://docs.vespa.ai/en/reference/nativerank.html">NativeRank</a>, and the other is based on <a href="https://docs.vespa.ai/en/reference/bm25.html">BM25</a>.</p>
+</section>
+<section id="deploy-the-application" class="level2">
+<h2 class="anchored" data-anchor-id="deploy-the-application">Deploy the application</h2>
+<p>Deploy the application package in a Docker container for local development. Alternatively, it is possible to deploy the application package to <a href="https://pyvespa.readthedocs.io/en/latest/deploy-vespa-cloud.html">Vespa Cloud</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> vespa.deployment <span class="im">import</span> VespaDocker</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>vespa_docker <span class="op">=</span> VespaDocker()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> vespa_docker.deploy(application_package<span class="op">=</span>app_package)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Waiting for configuration server, 0/300 seconds...
+Waiting for configuration server, 5/300 seconds...
+Waiting for application status, 0/300 seconds...
+Waiting for application status, 5/300 seconds...
+Waiting for application status, 10/300 seconds...
+Waiting for application status, 15/300 seconds...
+Waiting for application status, 20/300 seconds...
+Finished deployment.</code></pre>
+</div>
+</div>
+<p>Once the deployment is finished, we can interact with the deployed application through the <code>app</code> variable.</p>
+</section>
+<section id="get-sample-data" class="level2">
+<h2 class="anchored" data-anchor-id="get-sample-data">Get sample data</h2>
+<p>We can load passage ranking sample data with <a href="https://thigm85.github.io/learntorank/module_passage.html#passagedata.load"><code>PassageData.load</code></a>. By default, it will download pre-generated sample data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.passage <span class="im">import</span> PassageData</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> PassageData.load()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>PassageData(corpus, train_qrels, train_queries, dev_qrels, dev_queries)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data.summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of documents: 1000
+Number of train queries: 100
+Number of train relevance judgments: 100
+Number of dev queries: 100
+Number of dev relevance judgments: 100</code></pre>
+</div>
+</div>
+</section>
+<section id="feed-the-application" class="level2">
+<h2 class="anchored" data-anchor-id="feed-the-application">Feed the application</h2>
+<p>Get the document corpus in a <code>DataFrame</code> format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>corpus_df <span class="op">=</span> data.get_corpus()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>corpus_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>doc_id</th>
+      <th>text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5954248</td>
+      <td>Why GameStop is excited for Dragon Age: Inquis...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7290700</td>
+      <td>metaplasia definition: 1. abnormal change of o...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>5465518</td>
+      <td>Candice Net Worth. According to the report of ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3100518</td>
+      <td>Under the Base Closure Act, March AFB was down...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3207764</td>
+      <td>There are a number of career opportunities for...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Feed the data to the deployed application.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>responses <span class="op">=</span> app.feed_df(df<span class="op">=</span>corpus_df, include_id<span class="op">=</span><span class="va">True</span>, id_field<span class="op">=</span><span class="st">"doc_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Successful documents fed: 1000/1000.
+Batch progress: 1/1.</code></pre>
+</div>
+</div>
+<p>We can also check the number of successfully fed documents through the responses status code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">sum</span>([response.status_code <span class="op">==</span> <span class="dv">200</span> <span class="cf">for</span> response <span class="kw">in</span> responses])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>1000</code></pre>
+</div>
+</div>
+</section>
+<section id="query-the-application" class="level2">
+<h2 class="anchored" data-anchor-id="query-the-application">Query the application</h2>
+<p>Get the dev set queries in a <code>DataFrame</code> format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dev_queries_df <span class="op">=</span> data.get_queries(<span class="bu">type</span><span class="op">=</span><span class="st">"dev"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>dev_queries_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>query_id</th>
+      <th>query</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1101971</td>
+      <td>why say the sky is the limit</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>712898</td>
+      <td>what is an cvc in radiology</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>154469</td>
+      <td>dmv california how long does it take to get id</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>930015</td>
+      <td>what's an epigraph</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>860085</td>
+      <td>what is va tax</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Get the first query text to use as an example when querying our passage search application.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sample_query <span class="op">=</span> dev_queries_df.loc[<span class="dv">0</span>, <span class="st">"query"</span>]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>sample_query</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'why say the sky is the limit'</code></pre>
+</div>
+</div>
+<section id="query-with-querymodel" class="level3">
+<h3 class="anchored" data-anchor-id="query-with-querymodel">Query with QueryModel</h3>
+<p>Create the <code>bm25</code> <a href="https://pyvespa.readthedocs.io/en/latest/reference-api.html#querymodel">QueryModel</a>, which uses <a href="https://docs.vespa.ai/en/reference/query-language-reference.html#weakand">Vespa’s weakAnd</a> operator to match documents relevant to the query and use the <code>bm25</code> <code>rank-profile</code> that we defined in the application package above to rank the documents.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.query <span class="im">import</span> QueryModel, WeakAnd, Ranking</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>bm25_query_model <span class="op">=</span> QueryModel(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"bm25"</span>, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    match_phase<span class="op">=</span>WeakAnd(hits<span class="op">=</span><span class="dv">100</span>), </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    ranking<span class="op">=</span>Ranking(name<span class="op">=</span><span class="st">"bm25"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Once a <a href="https://thigm85.github.io/learntorank/module_query.html#querymodel"><code>QueryModel</code></a> is specified, we can use it to query our application.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.query <span class="im">import</span> send_query</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> send_query(</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    query<span class="op">=</span>sample_query, </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>bm25_query_model</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>pprint(response.hits[<span class="dv">0</span>:<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[{'fields': {'doc_id': '7407715',
+             'documentid': 'id:PassageRanking:PassageRanking::7407715',
+             'sddocname': 'PassageRanking',
+             'summaryfeatures': {'bm25(text)': 11.979235042476953,
+                                 'vespa.summaryFeatures.cached': 0.0},
+             'text': 'The Sky is the Limit also known as TSITL is a global '
+                     'effort designed to influence, motivate and inspire '
+                     'people all over the world to achieve their goals and '
+                     'dreams in life. TSITL’s collaborative community on '
+                     'social media provides you with a vast archive of '
+                     'motivational pictures/quotes/videos.'},
+  'id': 'id:PassageRanking:PassageRanking::7407715',
+  'relevance': 11.979235042476953,
+  'source': 'PassageRanking_content'},
+ {'fields': {'doc_id': '84721',
+             'documentid': 'id:PassageRanking:PassageRanking::84721',
+             'sddocname': 'PassageRanking',
+             'summaryfeatures': {'bm25(text)': 11.310323797415357,
+                                 'vespa.summaryFeatures.cached': 0.0},
+             'text': 'Sky Customer Service 0870 280 2564. Use the Sky contact '
+                     'number to get in contact with the Sky customer services '
+                     'team to speak to a representative about your Sky TV, Sky '
+                     'Internet or Sky telephone services. The Sky customer '
+                     'Services team is operational between 8:30am and 11:30pm '
+                     'seven days a week.'},
+  'id': 'id:PassageRanking:PassageRanking::84721',
+  'relevance': 11.310323797415357,
+  'source': 'PassageRanking_content'}]</code></pre>
+</div>
+</div>
+</section>
+<section id="query-with-vespa-query-language" class="level3">
+<h3 class="anchored" data-anchor-id="query-with-vespa-query-language">Query with Vespa Query Language</h3>
+<p>We can also translate the query created with the <a href="https://thigm85.github.io/learntorank/module_query.html#querymodel"><code>QueryModel</code></a> into the <a href="https://docs.vespa.ai/en/query-language.html">Vespa Query Language (YQL)</a> by setting <code>debug_request=True</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> send_query(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    query <span class="op">=</span> sample_query, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>bm25_query_model, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    debug_request<span class="op">=</span><span class="va">True</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>yql_body <span class="op">=</span> response.request_body</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>pprint(yql_body)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'ranking': {'listFeatures': 'false', 'profile': 'bm25'},
+ 'yql': 'select * from sources * where ({targetHits: 100}weakAnd(default '
+        'contains "why", default contains "say", default contains "the", '
+        'default contains "sky", default contains "is", default contains '
+        '"the", default contains "limit"));'}</code></pre>
+</div>
+</div>
+<p>We can use Vespa YQL directly via the <code>body</code> parameter:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>yql_response <span class="op">=</span> send_query(app<span class="op">=</span>app, body<span class="op">=</span>yql_body)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pprint(yql_response.hits[<span class="dv">0</span>:<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[{'fields': {'doc_id': '7407715',
+             'documentid': 'id:PassageRanking:PassageRanking::7407715',
+             'sddocname': 'PassageRanking',
+             'summaryfeatures': {'bm25(text)': 11.979235042476953,
+                                 'vespa.summaryFeatures.cached': 0.0},
+             'text': 'The Sky is the Limit also known as TSITL is a global '
+                     'effort designed to influence, motivate and inspire '
+                     'people all over the world to achieve their goals and '
+                     'dreams in life. TSITL’s collaborative community on '
+                     'social media provides you with a vast archive of '
+                     'motivational pictures/quotes/videos.'},
+  'id': 'id:PassageRanking:PassageRanking::7407715',
+  'relevance': 11.979235042476953,
+  'source': 'PassageRanking_content'},
+ {'fields': {'doc_id': '84721',
+             'documentid': 'id:PassageRanking:PassageRanking::84721',
+             'sddocname': 'PassageRanking',
+             'summaryfeatures': {'bm25(text)': 11.310323797415357,
+                                 'vespa.summaryFeatures.cached': 0.0},
+             'text': 'Sky Customer Service 0870 280 2564. Use the Sky contact '
+                     'number to get in contact with the Sky customer services '
+                     'team to speak to a representative about your Sky TV, Sky '
+                     'Internet or Sky telephone services. The Sky customer '
+                     'Services team is operational between 8:30am and 11:30pm '
+                     'seven days a week.'},
+  'id': 'id:PassageRanking:PassageRanking::84721',
+  'relevance': 11.310323797415357,
+  'source': 'PassageRanking_content'}]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluate-query-models" class="level2">
+<h2 class="anchored" data-anchor-id="evaluate-query-models">Evaluate query models</h2>
+<p>In this section, we want to evaluate and compare the <code>bm25_query_model</code> defined above with the <code>native_query_model</code> defined below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>native_query_model <span class="op">=</span> QueryModel(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"native_rank"</span>, </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    match_phase<span class="op">=</span>WeakAnd(hits<span class="op">=</span><span class="dv">100</span>), </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    ranking<span class="op">=</span>Ranking(name<span class="op">=</span><span class="st">"native_rank"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We specify three metrics to evaluate the models.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.evaluation <span class="im">import</span> (</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    Recall, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    ReciprocalRank, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    NormalizedDiscountedCumulativeGain</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>metrics <span class="op">=</span> [</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    Recall(at<span class="op">=</span><span class="dv">10</span>), </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    ReciprocalRank(at<span class="op">=</span><span class="dv">3</span>), </span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    NormalizedDiscountedCumulativeGain(at<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="point-estimates" class="level3">
+<h3 class="anchored" data-anchor-id="point-estimates">Point estimates</h3>
+<p>It is straightforward to obtain point estimates of the evaluation metrics for each query model being compared. In this case, we computed the mean and the standard deviation for each of the metrics.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.evaluation <span class="im">import</span> evaluate</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>evaluation <span class="op">=</span> evaluate(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    labeled_data<span class="op">=</span>data.get_labels(<span class="bu">type</span><span class="op">=</span><span class="st">"dev"</span>), </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    eval_metrics<span class="op">=</span>metrics, </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>[native_query_model, bm25_query_model], </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span>,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    aggregators<span class="op">=</span>[<span class="st">"mean"</span>, <span class="st">"std"</span>]</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>evaluation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>bm25</th>
+      <th>native_rank</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="2" valign="top">recall_10</th>
+      <th>mean</th>
+      <td>0.935833</td>
+      <td>0.845833</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.215444</td>
+      <td>0.342749</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">reciprocal_rank_3</th>
+      <th>mean</th>
+      <td>0.935000</td>
+      <td>0.755000</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.231977</td>
+      <td>0.394587</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">ndcg_3</th>
+      <th>mean</th>
+      <td>0.912839</td>
+      <td>0.749504</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.242272</td>
+      <td>0.381792</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Given the nature of the data distribution of the metrics described above, it is not trivial to compute a confidence interval from the mean and the standard deviation computed above. In the next section, we solve this by using bootstrap sampling on a per query metric evaluation.</p>
+</section>
+<section id="uncertainty-estimates" class="level3">
+<h3 class="anchored" data-anchor-id="uncertainty-estimates">Uncertainty estimates</h3>
+<p>Instead of returning aggregated point estimates, we can also compute the metrics per query by setting <code>per_query=True</code>. This gives us more granular information on the distribution function of the metrics.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>evaluation_per_query <span class="op">=</span> evaluate(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    app<span class="op">=</span>app,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    labeled_data<span class="op">=</span>data.get_labels(<span class="bu">type</span><span class="op">=</span><span class="st">"dev"</span>), </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    eval_metrics<span class="op">=</span>metrics, </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    query_model<span class="op">=</span>[native_query_model, bm25_query_model], </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    id_field<span class="op">=</span><span class="st">"doc_id"</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    per_query<span class="op">=</span><span class="va">True</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>evaluation_per_query.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>query_id</th>
+      <th>recall_10</th>
+      <th>reciprocal_rank_3</th>
+      <th>ndcg_3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>native_rank</td>
+      <td>1101971</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>native_rank</td>
+      <td>712898</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>native_rank</td>
+      <td>154469</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>native_rank</td>
+      <td>930015</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>native_rank</td>
+      <td>860085</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>We then created a function that uses the evaluation per query data and computes uncertainty estimates via bootstrap sampling.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> learntorank.stats <span class="im">import</span> compute_evaluation_estimates</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>estimates <span class="op">=</span> compute_evaluation_estimates(</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> evaluation_per_query</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>estimates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>metric</th>
+      <th>model</th>
+      <th>low</th>
+      <th>median</th>
+      <th>high</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>ndcg_3</td>
+      <td>bm25</td>
+      <td>0.865279</td>
+      <td>0.914863</td>
+      <td>0.958766</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>ndcg_3</td>
+      <td>native_rank</td>
+      <td>0.675220</td>
+      <td>0.752400</td>
+      <td>0.820318</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>recall_10</td>
+      <td>bm25</td>
+      <td>0.891667</td>
+      <td>0.935833</td>
+      <td>0.974187</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>recall_10</td>
+      <td>native_rank</td>
+      <td>0.778312</td>
+      <td>0.847917</td>
+      <td>0.910000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>reciprocal_rank_3</td>
+      <td>bm25</td>
+      <td>0.890000</td>
+      <td>0.935000</td>
+      <td>0.975000</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>reciprocal_rank_3</td>
+      <td>native_rank</td>
+      <td>0.678333</td>
+      <td>0.758333</td>
+      <td>0.831667</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>We can then create plots based on this data to make it easier to judge the magnitude of the differences between ranking functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((ggplot(estimates) <span class="op">+</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a> geom_point(aes(<span class="st">"model"</span>, <span class="st">"median"</span>)) <span class="op">+</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a> geom_errorbar(aes(x<span class="op">=</span><span class="st">"model"</span>, ymin<span class="op">=</span><span class="st">"low"</span>,ymax<span class="op">=</span><span class="st">"high"</span>)) <span class="op">+</span> </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a> facet_wrap(<span class="st">"metric"</span>) <span class="op">+</span> labs(y<span class="op">=</span><span class="st">"Metric value"</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="011_passage_uncertainty_evaluation_files/figure-html/cell-26-output-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code></code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="cleanup-the-environment" class="level2">
+<h2 class="anchored" data-anchor-id="cleanup-the-environment">Cleanup the environment</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>vespa_docker.container.stop(timeout<span class="op">=</span><span class="dv">600</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>vespa_docker.container.remove()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

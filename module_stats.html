@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Reference API related to statistical functions">
+
+<title>Vespa Data Science - stats</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Vespa Data Science - stats">
+<meta property="og:description" content="Reference API related to statistical functions">
+<meta property="og:site-name" content="Vespa Data Science">
+<meta name="twitter:title" content="Vespa Data Science - stats">
+<meta name="twitter:description" content="Reference API related to statistical functions">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Vespa Data Science</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">stats</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Vespa for Data Scientists</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Use-case experiments</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">Passage Ranking</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./passage_dataset.html" class="sidebar-item-text sidebar-link">Dataset</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./passage_uncertainty_evaluation.html" class="sidebar-item-text sidebar-link">IR evaluation metrics with uncertainty estimates</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">Model serving</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stateless_sequence_classification_task.html" class="sidebar-item-text sidebar-link">Sequence Classification task</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Use-case modules</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_passage.html" class="sidebar-item-text sidebar-link">passage</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">Core modules</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_stats.html" class="sidebar-item-text sidebar-link active">stats</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_evaluation.html" class="sidebar-item-text sidebar-link">evaluation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_query.html" class="sidebar-item-text sidebar-link">query</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_ranking.html" class="sidebar-item-text sidebar-link">ranking</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./module_ml.html" class="sidebar-item-text sidebar-link">ml</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#bootstrap-estimates" id="toc-bootstrap-estimates" class="nav-link active" data-scroll-target="#bootstrap-estimates">Bootstrap estimates</a>
+  <ul class="collapse">
+  <li><a href="#bootstrap_sampling" id="toc-bootstrap_sampling" class="nav-link" data-scroll-target="#bootstrap_sampling">bootstrap_sampling</a></li>
+  <li><a href="#compute_evaluation_estimates" id="toc-compute_evaluation_estimates" class="nav-link" data-scroll-target="#compute_evaluation_estimates">compute_evaluation_estimates</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/vespa-engine/learntorank/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">stats</h1>
+</div>
+
+<div>
+  <div class="description">
+    Reference API related to statistical functions
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="bootstrap-estimates" class="level2">
+<h2 class="anchored" data-anchor-id="bootstrap-estimates">Bootstrap estimates</h2>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/stats.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="bootstrap_sampling" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap_sampling">bootstrap_sampling</h3>
+<blockquote class="blockquote">
+<pre><code> bootstrap_sampling (data:pandas.core.frame.DataFrame,
+                     estimator:Callable=&lt;function mean&gt;, n_boot:int=1000,
+                     columns_to_exclude:List[str]=None)</code></pre>
+</blockquote>
+<p>Compute bootstrap estimates of the data distribution</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data</td>
+<td>DataFrame</td>
+<td></td>
+<td>Data containing the columns we want to generate bootstrap estimates from.</td>
+</tr>
+<tr class="even">
+<td>estimator</td>
+<td>typing.Callable</td>
+<td>mean</td>
+<td>estimator function that accepts an array-like argument.</td>
+</tr>
+<tr class="odd">
+<td>n_boot</td>
+<td>int</td>
+<td>1000</td>
+<td>Number of bootstrap estimates to compute.</td>
+</tr>
+<tr class="even">
+<td>columns_to_exclude</td>
+<td>typing.List[str]</td>
+<td>None</td>
+<td>Column names to exclude.</td>
+</tr>
+</tbody>
+</table>
+<p>Usage:</p>
+<p>Generate <code>data</code> with columns containing data that we want to compute estimates from. The values in the column <code>a</code> comes from Normal distribution with mean 0 and standard deviation 1. The values from column <code>b</code> comes from Normal distribution with mean 100 and standard deviation 10.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>{</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"a"</span>: np.random.normal(size <span class="op">=</span> <span class="dv">100</span>), </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"b"</span>: np.random.normal(loc<span class="op">=</span><span class="dv">100</span>, scale <span class="op">=</span> <span class="dv">10</span>, size <span class="op">=</span> <span class="dv">100</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.605639</td>
+      <td>92.817505</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-0.775791</td>
+      <td>92.750026</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>-1.265231</td>
+      <td>107.981771</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.981306</td>
+      <td>101.388385</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.029075</td>
+      <td>122.700172</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="compute-mean-of-the-distribution-by-default" class="level4">
+<h4 class="anchored" data-anchor-id="compute-mean-of-the-distribution-by-default">Compute mean of the distribution by default</h4>
+<p>By default, the function generates the mean of each column <code>n_boot</code> times. Each value represents the mean obtained from a bootstrap sample of the original <code>data</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>estimates <span class="op">=</span> bootstrap_sampling(data, n_boot<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>estimates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.012356</td>
+      <td>100.018394</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.143189</td>
+      <td>100.691872</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>-0.002554</td>
+      <td>99.874399</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.079395</td>
+      <td>99.539636</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.055096</td>
+      <td>100.452383</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>0.063409</td>
+      <td>100.439363</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>-0.024455</td>
+      <td>98.607045</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>0.209427</td>
+      <td>99.866736</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>0.061323</td>
+      <td>98.680469</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>0.289456</td>
+      <td>99.980295</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 2 columns</p>
+</div>
+</div>
+</div>
+<p>We can check if the estimates make sense by compute the mean of the bootstrap estimates and comparing with the mean of the Normal distribution they were generated from.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>estimates.mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>a      0.089538
+b    100.099900
+dtype: float64</code></pre>
+</div>
+</div>
+</section>
+<section id="specify-function.-example-standard-deviation." class="level4">
+<h4 class="anchored" data-anchor-id="specify-function.-example-standard-deviation.">Specify function. Example: Standard deviation.</h4>
+<p>We can specify other functions, such as <code>np.std</code> to compute the standard deviation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>estimates <span class="op">=</span> bootstrap_sampling(data, estimator<span class="op">=</span>np.std, n_boot<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>estimates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.933496</td>
+      <td>10.126658</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.929125</td>
+      <td>9.852667</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.899762</td>
+      <td>10.307814</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.968039</td>
+      <td>10.416074</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.004349</td>
+      <td>10.441463</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>0.910904</td>
+      <td>10.357727</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>0.818276</td>
+      <td>12.358640</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>0.981826</td>
+      <td>9.622724</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>0.962237</td>
+      <td>10.897055</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>0.913994</td>
+      <td>11.096338</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 2 columns</p>
+</div>
+</div>
+</div>
+<p>If we take the mean of the bootstrap estimates of the standard deviation, we should recover a value close to the standard deviation of the distribution that the data were generated from.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>estimates.mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>a     0.943942
+b    10.480457
+dtype: float64</code></pre>
+</div>
+</div>
+</section>
+<section id="exclude-unwanted-columns" class="level4">
+<h4 class="anchored" data-anchor-id="exclude-unwanted-columns">Exclude unwanted columns</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>estimates <span class="op">=</span> bootstrap_sampling(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    data, n_boot<span class="op">=</span><span class="dv">100</span>, columns_to_exclude<span class="op">=</span>[<span class="st">"b"</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>estimates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>a</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.259128</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.098232</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.087111</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-0.131376</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.050997</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>0.129835</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>-0.004873</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>-0.046338</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>0.246239</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>0.355848</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 1 columns</p>
+</div>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/vespa-engine/learntorank/blob/main/learntorank/stats.py#L29" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+<section id="compute_evaluation_estimates" class="level3">
+<h3 class="anchored" data-anchor-id="compute_evaluation_estimates">compute_evaluation_estimates</h3>
+<blockquote class="blockquote">
+<pre><code> compute_evaluation_estimates (df:pandas.core.frame.DataFrame,
+                               n_boot:int=1000,
+                               estimator:Callable=&lt;function mean&gt;,
+                               quantile_low:float=0.025,
+                               quantile_high=0.975)</code></pre>
+</blockquote>
+<p>Compute estimate and confidence interval for evaluation per query metrics.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>df</td>
+<td>DataFrame</td>
+<td></td>
+<td>Evaluations per query data, usually obtained pyvespa evaluate method.</td>
+</tr>
+<tr class="even">
+<td>n_boot</td>
+<td>int</td>
+<td>1000</td>
+<td>Number of bootstrap samples.</td>
+</tr>
+<tr class="odd">
+<td>estimator</td>
+<td>typing.Callable</td>
+<td>mean</td>
+<td>estimator function that accepts an array-like argument.</td>
+</tr>
+<tr class="even">
+<td>quantile_low</td>
+<td>float</td>
+<td>0.025</td>
+<td>lower quantile to compute confidence interval</td>
+</tr>
+<tr class="odd">
+<td>quantile_high</td>
+<td>float</td>
+<td>0.975</td>
+<td>upper quantile to compute confidence interval</td>
+</tr>
+</tbody>
+</table>
+<p>Usage:</p>
+<p>Generate sample data frame, which must contain the column <code>model</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>number_data_points <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"model"</span>: (</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>            [<span class="st">"A"</span>] <span class="op">*</span> number_data_points <span class="op">+</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>            [<span class="st">"B"</span>] <span class="op">*</span> number_data_points</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"query_id"</span>: (</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>            <span class="bu">list</span>(<span class="bu">range</span>(number_data_points)) <span class="op">+</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>            <span class="bu">list</span>(<span class="bu">range</span>(number_data_points))</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"metric_1"</span>: (</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            np.random.binomial(size<span class="op">=</span>number_data_points, n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.3</span>).tolist() <span class="op">+</span> </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            np.random.binomial(size<span class="op">=</span>number_data_points, n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.7</span>).tolist()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"metric_2"</span>: (</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>            np.random.binomial(size<span class="op">=</span>number_data_points, n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.1</span>).tolist() <span class="op">+</span> </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>            np.random.binomial(size<span class="op">=</span>number_data_points, n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.9</span>).tolist()</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>).sort_values(<span class="st">"query_id"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>model</th>
+      <th>query_id</th>
+      <th>metric_1</th>
+      <th>metric_2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>A</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>B</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>A</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>B</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>A</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1995</th>
+      <td>A</td>
+      <td>997</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1996</th>
+      <td>B</td>
+      <td>998</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1997</th>
+      <td>A</td>
+      <td>998</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1998</th>
+      <td>A</td>
+      <td>999</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1999</th>
+      <td>B</td>
+      <td>999</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>2000 rows × 4 columns</p>
+</div>
+</div>
+</div>
+<section id="compute-the-confidence-interval-of-the-mean-by-default" class="level4">
+<h4 class="anchored" data-anchor-id="compute-the-confidence-interval-of-the-mean-by-default">Compute the confidence interval of the mean by default</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>compute_evaluation_estimates(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>metric</th>
+      <th>model</th>
+      <th>low</th>
+      <th>median</th>
+      <th>high</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>metric_1</td>
+      <td>A</td>
+      <td>0.268000</td>
+      <td>0.296</td>
+      <td>0.325</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>metric_1</td>
+      <td>B</td>
+      <td>0.667000</td>
+      <td>0.696</td>
+      <td>0.724</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>metric_2</td>
+      <td>A</td>
+      <td>0.091000</td>
+      <td>0.109</td>
+      <td>0.129</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>metric_2</td>
+      <td>B</td>
+      <td>0.887975</td>
+      <td>0.907</td>
+      <td>0.924</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="specify-function.-example-standard-deviation.-1" class="level4">
+<h4 class="anchored" data-anchor-id="specify-function.-example-standard-deviation.-1">Specify function. Example: Standard deviation.</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>compute_evaluation_estimates(data, estimator<span class="op">=</span>np.std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>metric</th>
+      <th>model</th>
+      <th>low</th>
+      <th>median</th>
+      <th>high</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>metric_1</td>
+      <td>A</td>
+      <td>0.442918</td>
+      <td>0.456491</td>
+      <td>0.468375</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>metric_1</td>
+      <td>B</td>
+      <td>0.448001</td>
+      <td>0.459983</td>
+      <td>0.470931</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>metric_2</td>
+      <td>A</td>
+      <td>0.289026</td>
+      <td>0.311639</td>
+      <td>0.335200</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>metric_2</td>
+      <td>B</td>
+      <td>0.264998</td>
+      <td>0.291829</td>
+      <td>0.315366</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="specify-interval-coverage" class="level4">
+<h4 class="anchored" data-anchor-id="specify-interval-coverage">Specify interval coverage</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>compute_evaluation_estimates(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    data, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    quantile_low<span class="op">=</span><span class="fl">0.2</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    quantile_high<span class="op">=</span><span class="fl">0.8</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>metric</th>
+      <th>model</th>
+      <th>low</th>
+      <th>median</th>
+      <th>high</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>metric_1</td>
+      <td>A</td>
+      <td>0.285</td>
+      <td>0.296</td>
+      <td>0.308</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>metric_1</td>
+      <td>B</td>
+      <td>0.684</td>
+      <td>0.696</td>
+      <td>0.708</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>metric_2</td>
+      <td>A</td>
+      <td>0.102</td>
+      <td>0.110</td>
+      <td>0.118</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>metric_2</td>
+      <td>B</td>
+      <td>0.898</td>
+      <td>0.906</td>
+      <td>0.914</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>compute_evaluation_estimates(data[[<span class="st">"model"</span>, <span class="st">"metric_1"</span>, <span class="st">"metric_2"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>metric</th>
+      <th>model</th>
+      <th>low</th>
+      <th>median</th>
+      <th>high</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>metric_1</td>
+      <td>A</td>
+      <td>0.269975</td>
+      <td>0.297</td>
+      <td>0.326000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>metric_1</td>
+      <td>B</td>
+      <td>0.667975</td>
+      <td>0.696</td>
+      <td>0.726000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>metric_2</td>
+      <td>A</td>
+      <td>0.091000</td>
+      <td>0.109</td>
+      <td>0.129025</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>metric_2</td>
+      <td>B</td>
+      <td>0.888000</td>
+      <td>0.907</td>
+      <td>0.923000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
